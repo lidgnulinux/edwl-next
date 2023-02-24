@@ -405,6 +405,8 @@ static void run(char *startup_cmd);
 static void screenlock(const Arg *arg);
 static void scrollclients(const Arg *arg);
 static Client *selclient(void);
+static void settocenter(Client *c, int floating);
+static void movetocenter(const Arg *arg);
 static void setcursor(struct wl_listener *listener, void *data);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
@@ -1780,6 +1782,28 @@ minimizeclient(const Arg *arg)
   Client *sel = selclient();
   if (sel)
     sethidden(sel, 1);
+}
+
+void
+settocenter(Client *c, int floating)
+{
+	Monitor *mon = selmon, *m;
+	c->isfloating = floating;
+	if (floating) {
+		resize(c, (struct wlr_box){
+				.x = (mon->w.width - c->geom.width) / 2 + mon->m.x,
+				.y = (mon->w.height - c->geom.height) / 2 + mon->m.y,
+				.width = c->geom.width,
+				.height = c->geom.height}, 0);
+	}
+}
+
+void
+movetocenter(const Arg *)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		settocenter(sel, 1);
 }
 
 void
