@@ -13,6 +13,7 @@ Beberapa patch yang saya aplikasikan :
 - **Margin Bar**, menambahkan margin pada bar.
 - **Fungsi Hide**, menambahkan fungsi hide untuk menyembunyikan jendela lewat pintasan / *shortcut*.
 - **Fungsi Center Window**, menambahkan fungsi untuk memindah jendela tepat ke tengah monitor.
+- **Fungsi Move Floating Window**, menambahkan fungsi untuk memindah jendela *floating* ke kanan, kiri, atas dan bawah.
 
 ## Dependensi
 

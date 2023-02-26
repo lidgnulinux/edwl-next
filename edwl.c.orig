@@ -407,10 +407,6 @@ static void scrollclients(const Arg *arg);
 static Client *selclient(void);
 static void settocenter(Client *c, int floating);
 static void movetocenter(const Arg *arg);
-static void mvwlr(Client *c, int floating, int step);
-static void mvwud(Client *c, int floating, int step);
-static void move_left_right(const Arg *arg);
-static void move_up_down(const Arg *arg);
 static void setcursor(struct wl_listener *listener, void *data);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
@@ -1808,50 +1804,6 @@ movetocenter(const Arg *)
 	Client *sel = focustop(selmon);
 	if (sel)
 		settocenter(sel, 1);
-}
-
-void
-mvwlr(Client *c, int floating, int step)
-{
-	Monitor *mon = selmon, *m;
-	c->isfloating = floating;
-	if (floating) {
-		resize(c, (struct wlr_box){
-				.x = c->geom.x + step,
-				.y = c->geom.y,
-				.width = c->geom.width,
-				.height = c->geom.height}, 0);
-	}
-}
-
-void
-mvwud(Client *c, int floating, int step)
-{
-	Monitor *mon = selmon, *m;
-	c->isfloating = floating;
-	if (floating) {
-		resize(c, (struct wlr_box){
-				.x = c->geom.x,
-				.y = c->geom.y + step,
-				.width = c->geom.width,
-				.height = c->geom.height}, 0);
-	}
-}
-
-void
-move_left_right(const Arg *arg)
-{
-	Client *sel = focustop(selmon);
-	if (sel)
-		mvwlr(sel, 1, arg->i);
-}
-
-void
-move_up_down(const Arg *arg)
-{
-	Client *sel = focustop(selmon);
-	if (sel)
-		mvwud(sel, 1, arg->i);
 }
 
 void

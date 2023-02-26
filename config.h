@@ -16,10 +16,10 @@ static const float fullscreen_bg[]  = COLOR( 1a1a1aff );
 static const float barcolor[]       = COLOR( 005478ff );
 static const float barbackcolor[]   = COLOR( 000000ff );
 static const float baractivecolor[] = COLOR( ffffffff );
-static const unsigned int barheight = 20;
+static const unsigned int barheight = 18;
 static const char barfontname[]     = "Ubuntu Mono derivative Powerline";
 static const float barfontcolor[]   = COLOR( ffffffff );
-static const unsigned int barfontsize = 14;
+static const unsigned int barfontsize = 12;
 static const int baralwaysontop     = 0;
 static const unsigned int margin_bar = 5;
 
@@ -66,7 +66,7 @@ static const MonitorRule monrules[] = {
   { "eDP-1",    0.5, 1,       0,     2,              1,      &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
   */
   /* defaults */
-  { NULL,       0.495, 1,     1,     1,              1,      &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
+  { NULL,       0.495, 1,     1,     1,              1,      &layouts[1], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
 };
 
 /* keyboard */
@@ -148,6 +148,10 @@ static const Key keys[] = {
   { MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
   { MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
   { MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+  { ALTKEY,                    XKB_KEY_h,          move_left_right, {.i = -40} },
+  { ALTKEY,                    XKB_KEY_l,          move_left_right, {.i = +40} },
+  { ALTKEY,                    XKB_KEY_k,          move_up_down, {.i = -40} },
+  { ALTKEY,                    XKB_KEY_j,          move_up_down, {.i = +40} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          scrollclients,  {.i = 1} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          scrollclients,  {.i = -1} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     zoom,           {0} },
