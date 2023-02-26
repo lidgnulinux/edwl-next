@@ -411,6 +411,10 @@ static void mvwlr(Client *c, int floating, int step);
 static void mvwud(Client *c, int floating, int step);
 static void move_left_right(const Arg *arg);
 static void move_up_down(const Arg *arg);
+static void rzwlr(Client *c, int floating, int step);
+static void rzwud(Client *c, int floating, int step);
+static void resize_left_right(const Arg *arg);
+static void resize_up_down(const Arg *arg);
 static void setcursor(struct wl_listener *listener, void *data);
 static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
@@ -1852,6 +1856,50 @@ move_up_down(const Arg *arg)
 	Client *sel = focustop(selmon);
 	if (sel)
 		mvwud(sel, 1, arg->i);
+}
+
+void
+rzwlr(Client *c, int floating, int step)
+{
+	Monitor *mon = selmon, *m;
+	c->isfloating = floating;
+	if (floating) {
+		resize(c, (struct wlr_box){
+				.x = c->geom.x,
+				.y = c->geom.y,
+				.width = c->geom.width + step,
+				.height = c->geom.height}, 0);
+	}
+}
+
+void
+rzwud(Client *c, int floating, int step)
+{
+	Monitor *mon = selmon, *m;
+	c->isfloating = floating;
+	if (floating) {
+		resize(c, (struct wlr_box){
+				.x = c->geom.x,
+				.y = c->geom.y,
+				.width = c->geom.width,
+				.height = c->geom.height + step}, 0);
+	}
+}
+
+void
+resize_left_right(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		rzwlr(sel, 1, arg->i);
+}
+
+void
+resize_up_down(const Arg *arg)
+{
+	Client *sel = focustop(selmon);
+	if (sel)
+		rzwud(sel, 1, arg->i);
 }
 
 void
