@@ -66,11 +66,11 @@ install: edwl
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f edwl $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/edwl
-	mkdir -p $(DESTDIR)$(MANDIR)/man1
-	cp -f edwl.1 $(DESTDIR)$(MANDIR)/man1
-	chmod 644 $(DESTDIR)$(MANDIR)/man1/edwl.1
+	mkdir -p $(DESTDIR)$(PREFIX)/share/edwl  
+	cp -f wallpaper.png $(DESTDIR)$(PREFIX)/share/edwl 
+	chmod 644 $(DESTDIR)$(PREFIX)/share/edwl/wallpaper.png
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/edwl $(DESTDIR)$(MANDIR)/man1/edwl.1
+	rm -f $(DESTDIR)$(PREFIX)/bin/edwl
 
 .SUFFIXES: .c .o
 .c.o:

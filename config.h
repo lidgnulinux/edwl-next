@@ -24,7 +24,7 @@ static const int baralwaysontop     = 0;
 static const unsigned int margin_bar = 5;
 
 /* background image */
-static const char backgroundimage[] = "/home/ahmad/Pictures/mountain_landscape26_generated.jpg";
+static const char backgroundimage[] = "/usr/local/share/edwl/wallpaper.png";
 
 /*  lock  */
 static const float lockcolor[]      = COLOR( 00ff00ff );

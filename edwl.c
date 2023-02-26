@@ -3028,7 +3028,7 @@ rendertray(Monitor *m)
           cairo_image_surface_get_data(m->bar.tray.surface)
       );
       m->bar.tray.data = wlr_scene_buffer_create(m->bar.scenes[BarTopScene], (struct wlr_buffer*)m->bar.tray.buffer);
-      MOVENODE(m, &m->bar.tray.data->node, m->m.width - tray->applications_amount * barheight + margin_bar, margin_bar);
+      MOVENODE(m, &m->bar.tray.data->node, m->m.width - tray->applications_amount * barheight - margin_bar, margin_bar);
       wlr_scene_node_set_enabled(&m->bar.tray.data->node, true);
       wlr_scene_node_raise_to_top(&m->bar.tray.data->node);
     } 
@@ -3039,7 +3039,7 @@ rendertray(Monitor *m)
 
     /* Updating status bar position and clients on bar */
     m->bar.status_border = (m->bar.status_border - m->bar.applications_amount * barheight) + barheight * tray->applications_amount;
-    MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border + margin_bar, margin_bar);
+    MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - margin_bar, margin_bar);
 
     m->bar.applications_amount = tray->applications_amount;
     cairo_destroy(cairo);
