@@ -680,6 +680,8 @@ applyrules(Client *c)
           mon = m;
     }
   }
+  c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x,
+  c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y,
   wlr_scene_node_reparent(c->scene, layers[c->isfloating ? LyrFloat : LyrTile]);
   setmon(c, mon, newtags);
 }
@@ -1356,7 +1358,6 @@ createmon(struct wl_listener *listener, void *data)
 
   /* Creating bar surfaces */
   initbarrendering(m);
-//  initbarrendering2(m);
 }
 
 void
@@ -2639,28 +2640,6 @@ quitsignal(int signo)
 {
   quit(NULL);
 }
-
-// void
-// initbarrendering2(Monitor *m)
-// {
-// 
-//   int double_mg = 2 * margin_bar;
-//   cairo_surface_t *surface;
-//   cairo_t *cairo;
-// 
-//   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (m->w.width - double_mg), barheight);
-//   cairo = cairo_create(surface);
-// 
-//   cairo_set_source_rgba(cairo, barfontcolor[0], barfontcolor[1], barfontcolor[2], barfontcolor[3]);
-// 
-//   m->bar.rects[BarSubstraceRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
-//   m->bar.rects[BarSubstraceRect]->node.data = NULL;
-//   MOVENODE(m, &m->bar.rects[BarSubstraceRect]->node, margin_bar, 3*barheight);
-// 
-//   setstatustext(m, edwl_version);
-// 
-//   wl_list_init(&m->bar.clients);
-// }
 
 void
 initbarrendering(Monitor *m)
