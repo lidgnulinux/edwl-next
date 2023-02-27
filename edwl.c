@@ -4021,14 +4021,15 @@ updateclientbounds(Monitor *m)
   Client *c = selclient();
   struct wlr_fbox crop_box = {0, 0, 0, barheight};
   int clients_amount = 0;
-  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - m->bar.status_border;
+  int double_mg = 2 * margin_bar;
+  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - m->bar.status_border - double_mg - margin_bar;
   int width_for_each_client = 0;
   int current_point = m->bar.layout_symbol_border;
   int tags_amount = LENGTH(tags);
   int clients_on_seltag = 0;
   int is_sel_tag;
   int some_clients_on_seltag = 0;
-  int double_mg = 2 * margin_bar;
+  
   
   for (int current_tag = 0, current_tag_id = 1; current_tag < tags_amount; current_tag++)
   {
