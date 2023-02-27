@@ -876,7 +876,7 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
   xytonode(cursor->x, cursor->y, NULL, &c, NULL, NULL, NULL);
 
   /*  This events check if user clicked on a specific place on bar */
-  if (local_y < barheight && !c)
+  if (local_y < (barheight + margin_bar) && !c)
   {
     int selected_tag = 1;
     int tags_amount = sizeof(tags) / sizeof(tags[0]);
