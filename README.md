@@ -16,9 +16,14 @@ Beberapa patch yang saya aplikasikan :
 - **Fungsi Move Floating Window**, menambahkan fungsi untuk memindah jendela *floating* ke kanan, kiri, atas dan bawah.
 - **Fungsi Resize Floating Window**, menambahkan fungsi untuk mengubah ukuran jendela *floating*.
 
-## Dependensi
+## Dependensi.
 
 - Wlroots 0.15.X
+
+## Instalasi
+
+- Edit config.h dan config.mk, sesuaikan dengan kebutuhan.
+- Jalankan perintah `make`, `sudo make install`.
 
 ## Credit.
 
