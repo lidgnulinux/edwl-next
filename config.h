@@ -16,12 +16,14 @@ static const float fullscreen_bg[]  = COLOR( 1a1a1aff );
 static const float barcolor[]       = COLOR( 005478ff );
 static const float barbackcolor[]   = COLOR( 000000ff );
 static const float baractivecolor[] = COLOR( ffffffff );
+static const float barbordercolor[] = COLOR( 005478ff );
 static const unsigned int barheight = 18;
 static const char barfontname[]     = "Ubuntu Mono derivative Powerline";
 static const float barfontcolor[]   = COLOR( ffffffff );
 static const unsigned int barfontsize = 12;
 static const int baralwaysontop     = 0;
-static const unsigned int margin_bar = 5;
+static const unsigned int margin_bar = 4;
+static const unsigned int border_bar = 4; /* border bar size, 0 disable*/
 
 /* background image */
 static const char backgroundimage[] = "/usr/local/share/edwl/wallpaper.png";

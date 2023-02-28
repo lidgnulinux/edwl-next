@@ -2694,6 +2694,12 @@ initbarrendering(Monitor *m)
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (m->w.width - double_mg), barheight);
   cairo = cairo_create(surface);
 
+  // border bar
+  cairo_rectangle(cairo, 0, 0, m->w.width - double_mg, barheight);
+  cairo_set_source_rgba(cairo, barbordercolor[0], barbordercolor[1], barbordercolor[2], barbordercolor[3]);
+  cairo_set_line_width(cairo, border_bar);
+  cairo_stroke(cairo);
+
   /* Creating font description */
   pango_font_description = pango_font_description_from_string(barfontname);
   pango_font_description_set_absolute_size(pango_font_description, barfontsize * PANGO_SCALE);
