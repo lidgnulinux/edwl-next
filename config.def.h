@@ -5,7 +5,7 @@
 
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
-static const unsigned int borderpx  = 1;  /* border pixel of windows */
+static const unsigned int borderpx  = 3;  /* border pixel of windows */
 static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
 static const float rootcolor[]      = COLOR( 4d4d4dff );
 static const float bordercolor[]    = COLOR( 7f7f7fff );
@@ -16,27 +16,28 @@ static const float fullscreen_bg[]  = COLOR( 1a1a1aff );
 static const float barcolor[]       = COLOR( 005478ff );
 static const float barbackcolor[]   = COLOR( 000000ff );
 static const float baractivecolor[] = COLOR( ffffffff );
-static const unsigned int barheight = 20;
-static const char barfontname[]     = "Ubuntu Mono";
+static const unsigned int barheight = 18;
+static const char barfontname[]     = "Ubuntu Mono derivative Powerline";
 static const float barfontcolor[]   = COLOR( ffffffff );
 static const unsigned int barfontsize = 12;
 static const int baralwaysontop     = 0;
+static const unsigned int margin_bar = 5;
 
 /* background image */
-static const char backgroundimage[] = "/usr/local/share/edwl/background.png";
+static const char backgroundimage[] = "/usr/local/share/edwl/wallpaper.png";
 
 /*  lock  */
 static const float lockcolor[]      = COLOR( 00ff00ff );
 static const char codetounlock[]    = "unlock";
 
 /*  gaps  */
-static const unsigned int gapsize   = 3;
+static const unsigned int gapsize   = 5;
 
 /*  devour */
 static const char devourcommand[]   = "edwldevour";
 
 /* Tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "1", "2", "3", "4" };
 
 static const Rule rules[] = {
   /* app_id     title       tags mask     isfloating   monitor */
@@ -51,9 +52,9 @@ static const Rule rules[] = {
 /* layout(s) */
 static const Layout layouts[] = {
   /* symbol     arrange function */
-  { "[T]",      tile },
-  { "[F]",      NULL },    /* no layout function means floating behavior */
-  { "[M]",      monocle },
+  { "[T] ",      tile },
+  { "[F] ",      NULL },    /* no layout function means floating behavior */
+  { "[M] ",      monocle },
 };
 
 /* monitors
@@ -65,7 +66,7 @@ static const MonitorRule monrules[] = {
   { "eDP-1",    0.5, 1,       0,     2,              1,      &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 0, 0 },
   */
   /* defaults */
-  { NULL,       0.495, 1,     1,     1,              1,      &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
+  { NULL,       0.495, 1,     1,     1,              1,      &layouts[1], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
 };
 
 /* keyboard */
@@ -147,11 +148,21 @@ static const Key keys[] = {
   { MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
   { MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05} },
   { MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05} },
+  { ALTKEY,                    XKB_KEY_h,          move_left_right, {.i = -40} },
+  { ALTKEY,                    XKB_KEY_l,          move_left_right, {.i = +40} },
+  { ALTKEY,                    XKB_KEY_k,          move_up_down, {.i = -40} },
+  { ALTKEY,                    XKB_KEY_j,          move_up_down, {.i = +40} },
+  { ALTKEY|WLR_MODIFIER_CTRL,  XKB_KEY_h,          resize_left_right, {.i = -40} },
+  { ALTKEY|WLR_MODIFIER_CTRL,  XKB_KEY_l,          resize_left_right, {.i = +40} },
+  { ALTKEY|WLR_MODIFIER_CTRL,  XKB_KEY_k,          resize_up_down, {.i = -40} },
+  { ALTKEY|WLR_MODIFIER_CTRL,  XKB_KEY_j,          resize_up_down, {.i = +40} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          scrollclients,  {.i = 1} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          scrollclients,  {.i = -1} },
   { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     zoom,           {0} },
   { MODKEY,                    XKB_KEY_Tab,        view,           {0} },
   { MODKEY,                    XKB_KEY_q,          killclient,     {0} },
+  { ALTKEY,                    XKB_KEY_m,          minimizeclient,     {0} },
+  { ALTKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          movetocenter,     {0} },
   { MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
   { MODKEY,                    XKB_KEY_g,          setlayout,      {.v = &layouts[1]} },
   { MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
