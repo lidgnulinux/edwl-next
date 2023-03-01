@@ -2321,6 +2321,7 @@ monocle(Monitor *m)
   unsigned int i, n = 0, h, mw, my, ty;
   unsigned int mh, mx, tx;
   int double_mg = 2 * margin_bar;
+  int double_bar = 2 * barheight;
   Client *c;
 
   wl_list_for_each(c, &clients, link) {
@@ -2332,7 +2333,7 @@ monocle(Monitor *m)
         .x = m->w.x + mw,
         .y = MAX(m->w.y + ty, barheight) + double_mg,
         .width = m->w.width - mw,
-        .height = MIN((m->w.height - ty),  m->w.height - barheight) - double_mg 
+        .height = MIN((m->w.height - ty),  m->w.height - barheight) - double_mg - barheight - double_mg
       }, 0);
 
       tx += c->geom.width - barheight;
