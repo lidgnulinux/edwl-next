@@ -358,7 +358,7 @@ static Monitor *dirtomon(enum wlr_direction dir);
 static void dragicondestroy(struct wl_listener *listener, void *data);
 static unsigned long djb2hash(const char* str);
 static void initbarrendering(Monitor *m);
-// static void initbarrendering2(Monitor *m);
+static void second_bar(Monitor *m);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
@@ -907,7 +907,7 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
     }
 
     /* checking that click was on applications zone */
-    if (local_x > selmon->bar.layout_symbol_border && local_x < selmon->w.width - selmon->bar.status_border )
+    if (local_x > selmon->bar.layout_symbol_border && local_x < selmon->w.width )
     {
       ClientOnBar *cb;
       Client *selc = selclient();
@@ -1358,6 +1358,7 @@ createmon(struct wl_listener *listener, void *data)
 
   /* Creating bar surfaces */
   initbarrendering(m);
+  second_bar(m);
 }
 
 void
@@ -2813,9 +2814,9 @@ initbarrendering(Monitor *m)
   MOVENODE(m, &m->bar.rects[BarUndertagsRect]->node, margin_bar, margin_bar);
 
   // Status rect
-  m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border, barheight, barbackcolor);
-  m->bar.rects[BarInfoRect]->node.data = NULL;
-  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - m->bar.status_border + margin_bar, margin_bar);
+  // m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border, barheight, barbackcolor);
+  // m->bar.rects[BarInfoRect]->node.data = NULL;
+  // MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - m->bar.status_border + margin_bar, margin_bar);
 
   // Bar for selected tag
   m->bar.rects[BarSelectedTagRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.tags_info[0].right, barheight, barcolor);
@@ -2854,11 +2855,59 @@ initbarrendering(Monitor *m)
   }
 
   /* Status text rendering */
-  setstatustext(m, edwl_version);
+  // setstatustext(m, edwl_version);
 
   wl_list_init(&m->bar.clients);
 }
 
+void
+second_bar(Monitor *m)
+{
+
+  int symbol_width = barheight;
+  int double_mg = 2 * margin_bar;
+  struct wlr_fbox back_box = {0, 0, 0, 0};
+  PangoLayout *layout;
+  PangoFontMetrics *metrics;
+  PangoContext *context;
+  cairo_surface_t *surface;
+  cairo_t *cairo;
+  int text_height = barheight / 2 - barfontsize / 2;
+  int layouts_amount = LENGTH(layouts);
+  int max_layouts_size = 0;
+
+  /*  Init surfaces and cairo for bar */
+  surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (m->w.width - double_mg), barheight);
+  cairo = cairo_create(surface);
+
+  /* Creating font description */
+  pango_font_description = pango_font_description_from_string(barfontname);
+  pango_font_description_set_absolute_size(pango_font_description, barfontsize * PANGO_SCALE);
+
+  /* updating draw  */
+  layout = pango_cairo_create_layout(cairo);
+  pango_layout_set_font_description(layout, pango_font_description);
+  cairo_set_source_rgba(cairo, barfontcolor[0], barfontcolor[1], barfontcolor[2], barfontcolor[3]);
+
+  /* Scenes creating */
+  m->bar.scenes[BarBottomScene] = &wlr_scene_tree_create(layers[LyrBarBottom])->node;
+  m->bar.scenes[BarTopScene] = &wlr_scene_tree_create(layers[LyrBarTop])->node;
+
+  /* Rect renderings */
+  // Base bar
+  m->bar.rects[BarSubstraceRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
+  m->bar.rects[BarSubstraceRect]->node.data = NULL;
+  MOVENODE(m, &m->bar.rects[BarSubstraceRect]->node, margin_bar, m->w.height - margin_bar - barheight);
+
+  // Status rect
+  m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border - margin_bar, barheight, barbackcolor);
+  m->bar.rects[BarInfoRect]->node.data = NULL;
+  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - m->bar.status_border, m->w.height - margin_bar - barheight);
+
+  setstatustext(m, edwl_version);
+  
+  wl_list_init(&m->bar.clients);
+}
 void
 lockstatechange(enum LockCircleDrawState state)
 {
@@ -3514,9 +3563,9 @@ setstatustext(Monitor *m, const char *text)
   rendertextonsurface(m, &m->bar.texts[BarStatusText], text, m->m.width / 2, barheight);
   m->bar.status_border = text_width + barheight * m->bar.applications_amount;
 
-  MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - double_mg, margin_bar);
+  MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - double_mg, m->w.height - barheight - margin_bar);
   wlr_scene_rect_set_size(m->bar.rects[BarInfoRect], text_width - double_mg , barheight);
-  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - text_width, margin_bar);
+  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - text_width,  m->w.height - barheight - margin_bar);
 
   m->bar.status_text_hash = hash;
 
@@ -3863,6 +3912,8 @@ tile(Monitor *m)
   unsigned int i, n = 0, h, mw, my, ty;
   unsigned int mh, mx, tx;
   int double_gaps = 2 * gapsize;
+  int double_bar = 2 * barheight;
+  int double_mg = 2 * margin_bar;
   Client *c;
 
   wl_list_for_each(c, &clients, link)
@@ -3884,14 +3935,14 @@ tile(Monitor *m)
 			.x = m->w.x + gapsize, 
 			.y = m->w.y + my + barheight + gapsize + margin_bar, 
 			.width = mw - double_gaps,
-			.height = (m->w.height - my) / (MIN(n, m->nmaster) - i) - barheight - double_gaps - margin_bar}, 0);
+			.height = (m->w.height - my) / (MIN(n, m->nmaster) - i) - double_bar - double_gaps - double_mg}, 0);
   		my += c->geom.height + gapsize + margin_bar;
   	} else {
   		resize(c, (struct wlr_box){
 			.x = m->w.x + mw, 
           		.y = m->w.y + ty + barheight + gapsize + margin_bar,
   			.width = m->w.width - mw - gapsize, 
-			.height = (m->w.height - ty) / (n - i) - barheight - double_gaps - margin_bar}, 0);
+			.height = (m->w.height - ty) / (n - i) - double_bar - double_gaps - double_mg}, 0);
   		ty += c->geom.height + gapsize;
   	}
   	i++;
@@ -4028,7 +4079,7 @@ updateclientbounds(Monitor *m)
   struct wlr_fbox crop_box = {0, 0, 0, barheight};
   int clients_amount = 0;
   int double_mg = 2 * margin_bar;
-  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - m->bar.status_border - double_mg - margin_bar;
+  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - double_mg;
   int width_for_each_client = 0;
   int current_point = m->bar.layout_symbol_border;
   int tags_amount = LENGTH(tags);
