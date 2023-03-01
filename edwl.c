@@ -3072,10 +3072,6 @@ rendertray(Monitor *m)
       wlr_scene_node_set_enabled(&m->bar.tray.data->node, false);
     }
 
-    /* Updating status bar position and clients on bar */
-    m->bar.status_border = (m->bar.status_border - m->bar.applications_amount * barheight) + barheight * tray->applications_amount;
-    MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - margin_bar, margin_bar);
-
     m->bar.applications_amount = tray->applications_amount;
     cairo_destroy(cairo);
 
@@ -3570,8 +3566,6 @@ setstatustext(Monitor *m, const char *text)
 
   m->bar.status_text_hash = hash;
 
-  /* Raise tray icons on top */
-  wlr_scene_node_raise_to_top(&m->bar.tray.data->node);
 }
 
 void
@@ -4080,7 +4074,7 @@ updateclientbounds(Monitor *m)
   struct wlr_fbox crop_box = {0, 0, 0, barheight};
   int clients_amount = 0;
   int double_mg = 2 * margin_bar;
-  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - double_mg;
+  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - double_mg - tray->applications_amount * barheight;
   int width_for_each_client = 0;
   int current_point = m->bar.layout_symbol_border;
   int tags_amount = LENGTH(tags);
