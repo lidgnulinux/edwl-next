@@ -94,7 +94,7 @@ enum { XDGShell, LayerShell, X11Managed, X11Unmanaged }; /* client types */
 enum { LyrBg, LyrBottom, LyrTop, LyrOverlay, LyrBarBottom, LyrBarTop, LyrTile, LyrFloat, LyrNoFocus, LyrLock, NUM_LAYERS }; /* scene layers */
 enum { BarBottomScene, BarTopScene , NUM_BAR_SCENES }; /* bar scenes */
 enum { BarTagsText, BarLayoutText, BarStatusText, NUM_BAR_TEXTS }; /* texts on bar */
-enum { BarSubstraceRect, BarUndertagsRect, BarSelectedTagRect, BarFocusedClientRect, BarInfoRect, NUM_BAR_RECTS }; /* rectangles on bar */
+enum { BarSubstraceRect, BarSubstraceRect2, BarUndertagsRect, BarSelectedTagRect, BarFocusedClientRect, BarInfoRect, NUM_BAR_RECTS }; /* rectangles on bar */
 enum { LockImageEnter1, LockImageEnter2, LockImageWrong, LockImageClean, NUM_LOCK_IMAGES }; /* lock circle images */
 #ifdef XWAYLAND
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
@@ -358,7 +358,6 @@ static Monitor *dirtomon(enum wlr_direction dir);
 static void dragicondestroy(struct wl_listener *listener, void *data);
 static unsigned long djb2hash(const char* str);
 static void initbarrendering(Monitor *m);
-static void second_bar(Monitor *m);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
@@ -1358,7 +1357,6 @@ createmon(struct wl_listener *listener, void *data)
 
   /* Creating bar surfaces */
   initbarrendering(m);
-  second_bar(m);
 }
 
 void
@@ -2804,6 +2802,11 @@ initbarrendering(Monitor *m)
   m->bar.rects[BarSubstraceRect]->node.data = NULL;
   MOVENODE(m, &m->bar.rects[BarSubstraceRect]->node, margin_bar, margin_bar);
   
+  // Base bar2
+  m->bar.rects[BarSubstraceRect2] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
+  m->bar.rects[BarSubstraceRect2]->node.data = NULL;
+  MOVENODE(m, &m->bar.rects[BarSubstraceRect2]->node, margin_bar, m->w.height - margin_bar - barheight);
+
   // Undertag rect
   m->bar.rects[BarUndertagsRect] = wlr_scene_rect_create(
     m->bar.scenes[BarBottomScene],
@@ -2815,9 +2818,9 @@ initbarrendering(Monitor *m)
   MOVENODE(m, &m->bar.rects[BarUndertagsRect]->node, margin_bar, margin_bar);
 
   // Status rect
-  // m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border, barheight, barbackcolor);
-  // m->bar.rects[BarInfoRect]->node.data = NULL;
-  // MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - m->bar.status_border + margin_bar, margin_bar);
+  m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border, barheight, barbackcolor);
+  m->bar.rects[BarInfoRect]->node.data = NULL;
+  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->w.width - m->bar.status_border, m->w.height - margin_bar - barheight);
 
   // Bar for selected tag
   m->bar.rects[BarSelectedTagRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.tags_info[0].right, barheight, barcolor);
@@ -2856,59 +2859,11 @@ initbarrendering(Monitor *m)
   }
 
   /* Status text rendering */
-  // setstatustext(m, edwl_version);
-
-  wl_list_init(&m->bar.clients);
-}
-
-void
-second_bar(Monitor *m)
-{
-
-  int symbol_width = barheight;
-  int double_mg = 2 * margin_bar;
-  struct wlr_fbox back_box = {0, 0, 0, 0};
-  PangoLayout *layout;
-  PangoFontMetrics *metrics;
-  PangoContext *context;
-  cairo_surface_t *surface;
-  cairo_t *cairo;
-  int text_height = barheight / 2 - barfontsize / 2;
-  int layouts_amount = LENGTH(layouts);
-  int max_layouts_size = 0;
-
-  /*  Init surfaces and cairo for bar */
-  surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (m->w.width - double_mg), barheight);
-  cairo = cairo_create(surface);
-
-  /* Creating font description */
-  pango_font_description = pango_font_description_from_string(barfontname);
-  pango_font_description_set_absolute_size(pango_font_description, barfontsize * PANGO_SCALE);
-
-  /* updating draw  */
-  layout = pango_cairo_create_layout(cairo);
-  pango_layout_set_font_description(layout, pango_font_description);
-  cairo_set_source_rgba(cairo, barfontcolor[0], barfontcolor[1], barfontcolor[2], barfontcolor[3]);
-
-  /* Scenes creating */
-  m->bar.scenes[BarBottomScene] = &wlr_scene_tree_create(layers[LyrBarBottom])->node;
-  m->bar.scenes[BarTopScene] = &wlr_scene_tree_create(layers[LyrBarTop])->node;
-
-  /* Rect renderings */
-  // Base bar
-  m->bar.rects[BarSubstraceRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
-  m->bar.rects[BarSubstraceRect]->node.data = NULL;
-  MOVENODE(m, &m->bar.rects[BarSubstraceRect]->node, margin_bar, m->w.height - margin_bar - barheight);
-
-  // Status rect
-  m->bar.rects[BarInfoRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->bar.status_border - margin_bar, barheight, barbackcolor);
-  m->bar.rects[BarInfoRect]->node.data = NULL;
-  MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - m->bar.status_border, m->w.height - margin_bar - barheight);
-
   setstatustext(m, edwl_version);
-  
+
   wl_list_init(&m->bar.clients);
 }
+
 void
 lockstatechange(enum LockCircleDrawState state)
 {
