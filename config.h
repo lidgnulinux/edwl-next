@@ -5,11 +5,11 @@
 
 /* appearance */
 static const int sloppyfocus        = 1;  /* focus follows mouse */
-static const unsigned int borderpx  = 3;  /* border pixel of windows */
+static const unsigned int borderpx  = 2;  /* border pixel of windows */
 static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
 static const float rootcolor[]      = COLOR( 4d4d4dff );
 static const float bordercolor[]    = COLOR( 7f7f7fff );
-static const float focuscolor[]     = COLOR( ff0000ff );
+static const float focuscolor[]     = COLOR( 005478ff );
 static const float fullscreen_bg[]  = COLOR( 1a1a1aff );
 
 /* bar */

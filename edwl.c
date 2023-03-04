@@ -3018,7 +3018,7 @@ rendertray(Monitor *m)
           cairo_image_surface_get_data(m->bar.tray.surface)
       );
       m->bar.tray.data = wlr_scene_buffer_create(m->bar.scenes[BarTopScene], (struct wlr_buffer*)m->bar.tray.buffer);
-      MOVENODE(m, &m->bar.tray.data->node, m->m.width - tray->applications_amount * barheight - margin_bar, margin_bar);
+      MOVENODE(m, &m->bar.tray.data->node, m->m.width - tray->applications_amount * barheight - margin_bar, m->w.height - margin_bar - barheight);
       wlr_scene_node_set_enabled(&m->bar.tray.data->node, true);
       wlr_scene_node_raise_to_top(&m->bar.tray.data->node);
     } 
@@ -3026,6 +3026,10 @@ rendertray(Monitor *m)
     {
       wlr_scene_node_set_enabled(&m->bar.tray.data->node, false);
     }
+
+    /* Updating status bar position and clients on bar */
+    m->bar.status_border = (m->bar.status_border - m->bar.applications_amount * barheight) + barheight * tray->applications_amount;
+    MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - double_mg, m->w.height - margin_bar - barheight);
 
     m->bar.applications_amount = tray->applications_amount;
     cairo_destroy(cairo);
@@ -3516,10 +3520,11 @@ setstatustext(Monitor *m, const char *text)
   m->bar.status_border = text_width + barheight * m->bar.applications_amount;
 
   MOVENODE(m, &m->bar.texts[BarStatusText].data->node, m->m.width - m->bar.status_border - double_mg, m->w.height - barheight - margin_bar);
-  wlr_scene_rect_set_size(m->bar.rects[BarInfoRect], text_width - double_mg , barheight);
+  wlr_scene_rect_set_size(m->bar.rects[BarInfoRect], text_width - double_mg, barheight);
   MOVENODE(m, &m->bar.rects[BarInfoRect]->node, m->m.width - text_width,  m->w.height - barheight - margin_bar);
 
   m->bar.status_text_hash = hash;
+  wlr_scene_node_raise_to_top(&m->bar.tray.data->node);
 
 }
 
@@ -4029,7 +4034,7 @@ updateclientbounds(Monitor *m)
   struct wlr_fbox crop_box = {0, 0, 0, barheight};
   int clients_amount = 0;
   int double_mg = 2 * margin_bar;
-  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - double_mg - tray->applications_amount * barheight;
+  int clients_zone_size = m->m.width - m->bar.layout_symbol_border - double_mg;
   int width_for_each_client = 0;
   int current_point = m->bar.layout_symbol_border;
   int tags_amount = LENGTH(tags);

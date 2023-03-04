@@ -15,6 +15,7 @@ Beberapa patch yang saya aplikasikan :
 - **Fungsi Center Window**, menambahkan fungsi untuk memindah jendela tepat ke tengah monitor.
 - **Fungsi Move Floating Window**, menambahkan fungsi untuk memindah jendela *floating* ke kanan, kiri, atas dan bawah.
 - **Fungsi Resize Floating Window**, menambahkan fungsi untuk mengubah ukuran jendela *floating*.
+- **Double Bar, (fitur experimental)**, menambahkan bar di bawah.
 
 ## Dependensi.
 
