@@ -935,16 +935,6 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
       }
     }
 
-    /* checking that click was on a tray panel */
-    if (local_x > selmon->m.width - tray->applications_amount * barheight)
-    {
-      int position = (int)((selmon->m.width - local_x) / barheight);
-      if (position < tray->applications_amount)
-      {
-        tray_process_click(tray->applications_amount - position - 1, button, local_x, local_y);
-      }
-    }
-
     return;
   }
 
