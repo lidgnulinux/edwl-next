@@ -94,7 +94,7 @@ enum { XDGShell, LayerShell, X11Managed, X11Unmanaged }; /* client types */
 enum { LyrBg, LyrBottom, LyrTop, LyrOverlay, LyrBarBottom, LyrBarTop, LyrTile, LyrFloat, LyrNoFocus, LyrLock, NUM_LAYERS }; /* scene layers */
 enum { BarBottomScene, BarTopScene , NUM_BAR_SCENES }; /* bar scenes */
 enum { BarTagsText, BarLayoutText, BarStatusText, NUM_BAR_TEXTS }; /* texts on bar */
-enum { BarSubstraceRect, BarSubstraceRect2, BarUndertagsRect, BarSelectedTagRect, BarFocusedClientRect, BarInfoRect, NUM_BAR_RECTS }; /* rectangles on bar */
+enum { BarSubstraceRect, BarSubstraceRect2, BarUndertagsRect, BarSelectedTagRect, BarFocusedClientRect, BarInfoRect, BarMenuRect, NUM_BAR_RECTS }; /* rectangles on bar */
 enum { LockImageEnter1, LockImageEnter2, LockImageWrong, LockImageClean, NUM_LOCK_IMAGES }; /* lock circle images */
 #ifdef XWAYLAND
 enum { NetWMWindowTypeDialog, NetWMWindowTypeSplash, NetWMWindowTypeToolbar,
@@ -936,6 +936,20 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
     }
 
     /* checking that click was on a tray panel */
+    if (local_x > selmon->m.width - tray->applications_amount * barheight)
+    {
+      int position = (int)((selmon->m.width - local_x) / barheight);
+      if (position < tray->applications_amount)
+      {
+        tray_process_click(tray->applications_amount - position - 1, button, local_x, local_y);
+      }
+    }
+
+    return;
+  }
+
+  if (local_y > (selmon->m.height - barheight - margin_bar) && !c)
+  {
     if (local_x > selmon->m.width - tray->applications_amount * barheight)
     {
       int position = (int)((selmon->m.width - local_x) / barheight);
@@ -2806,6 +2820,11 @@ initbarrendering(Monitor *m)
   m->bar.rects[BarSubstraceRect2] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
   m->bar.rects[BarSubstraceRect2]->node.data = NULL;
   MOVENODE(m, &m->bar.rects[BarSubstraceRect2]->node, margin_bar, m->w.height - margin_bar - barheight);
+
+  // Bar Menu Start
+  m->bar.rects[BarMenuRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], barheight, barheight, barbordercolor);
+  m->bar.rects[BarMenuRect]->node.data = NULL;
+  MOVENODE(m, &m->bar.rects[BarMenuRect]->node, margin_bar, m->w.height - margin_bar - barheight);
 
   // Undertag rect
   m->bar.rects[BarUndertagsRect] = wlr_scene_rect_create(
