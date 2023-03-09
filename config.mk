@@ -9,8 +9,8 @@ CFLAGS ?= -g -Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare -Wno-
 #XLIBS = xcb
 
 # Uncomment to build with systemd libs
-#DBUS_LIBS = libsystemd
-#DBUS_FLAGS = -DWITH_SYSTEMD
+# DBUS_LIBS = libsystemd
+# DBUS_FLAGS = -DWITH_SYSTEMD
 
 # Uncomment to build with elogind libs
 DBUS_LIBS = libelogind
