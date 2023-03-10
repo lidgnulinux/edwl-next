@@ -89,7 +89,7 @@
 #endif
 
 /* enums */
-enum { CurNormal, CurPressed , CurMove, CurResize }; /* cursor */
+enum { CurNormal, CurPressed , CurMove, CurMove2, CurResize }; /* cursor */
 enum { XDGShell, LayerShell, X11Managed, X11Unmanaged }; /* client types */
 enum { LyrBg, LyrBottom, LyrTop, LyrOverlay, LyrBarBottom, LyrBarTop, LyrTile, LyrFloat, LyrNoFocus, LyrLock, NUM_LAYERS }; /* scene layers */
 enum { BarBottomScene, BarTopScene , NUM_BAR_SCENES }; /* bar scenes */
@@ -2374,6 +2374,8 @@ motionnotify(uint32_t time)
 	LayerSurface *l;
 	struct wlr_surface *surface = NULL;
 	struct wlr_drag_icon *icon;
+	int grabc_w = 700;
+	int grabc_h = 500;
 
 	/* time is 0 in internal calls meant to restore pointer focus. */
 	if (time) {
@@ -2397,6 +2399,12 @@ motionnotify(uint32_t time)
 	} else if (cursor_mode == CurResize) {
 		resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
 			.width = cursor->x - grabc->geom.x, .height = cursor->y - grabc->geom.y}, 1);
+		return;
+	}
+	if (cursor_mode == CurMove2) {
+		/* Move the grabbed client to the new position. */
+		resize(grabc, (struct wlr_box){.x = cursor->x - grabcx, .y = cursor->y - grabcy,
+			.width = grabc_w, .height = grabc_h}, 1);
 		return;
 	}
 
@@ -2457,6 +2465,11 @@ moveresize(const Arg *arg)
   setfloating(grabc, 1);
   switch (cursor_mode = arg->ui) {
   case CurMove:
+    grabcx = cursor->x - grabc->geom.x;
+    grabcy = cursor->y - grabc->geom.y;
+    wlr_xcursor_manager_set_cursor_image(cursor_mgr, (cursor_image = "fleur"), cursor);
+    break;
+  case CurMove2:
     grabcx = cursor->x - grabc->geom.x;
     grabcy = cursor->y - grabc->geom.y;
     wlr_xcursor_manager_set_cursor_image(cursor_mgr, (cursor_image = "fleur"), cursor);
@@ -2816,9 +2829,9 @@ initbarrendering(Monitor *m)
   MOVENODE(m, &m->bar.rects[BarSubstraceRect]->node, margin_bar, margin_bar);
   
   // Base bar2
-  m->bar.rects[BarSubstraceRect2] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - double_mg, barheight, barbackcolor);
+  m->bar.rects[BarSubstraceRect2] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], m->w.width - barheight - (3 * margin_bar), barheight, barbackcolor);
   m->bar.rects[BarSubstraceRect2]->node.data = NULL;
-  MOVENODE(m, &m->bar.rects[BarSubstraceRect2]->node, margin_bar, m->w.height - margin_bar - barheight);
+  MOVENODE(m, &m->bar.rects[BarSubstraceRect2]->node, double_mg + barheight, m->w.height - margin_bar - barheight);
 
   // Bar Menu Start
   m->bar.rects[BarMenuRect] = wlr_scene_rect_create(m->bar.scenes[BarBottomScene], barheight, barheight, barbordercolor);

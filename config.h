@@ -125,6 +125,7 @@ static const double accel_speed = 0.0;
 /* If you want to use the windows key change this to WLR_MODIFIER_LOGO */
 #define MODKEY WLR_MODIFIER_LOGO
 #define ALTKEY WLR_MODIFIER_ALT
+#define CTRLKEY WLR_MODIFIER_CTRL
 #define TAGKEYS(KEY,SKEY,TAG) \
   { MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
   { MODKEY|WLR_MODIFIER_CTRL,  KEY,            toggleview,      {.ui = 1 << TAG} }, \
@@ -199,6 +200,7 @@ static const Key keys[] = {
 
 static const Button buttons[] = {
   { MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
+  { CTRLKEY, BTN_LEFT,   moveresize,     {.ui = CurMove2} },
   { MODKEY, BTN_MIDDLE, togglefloating, {0} },
   { ALTKEY, BTN_LEFT,  moveresize,     {.ui = CurResize} },
 };
