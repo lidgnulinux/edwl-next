@@ -949,7 +949,7 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
       }
     }
 
-    if (local_x > margin_bar && local_x < (selmon->w.width - selmon->bar.status_border - tray->applications_amount * barheight))
+    if (local_x > margin_bar && local_x < (margin_bar + barheight))
     {
         Client *c;
         wl_list_for_each(c, &clients, link)
