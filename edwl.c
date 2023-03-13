@@ -954,7 +954,7 @@ void mouseclick(int button, int mod) // mod - true, if MODKEY pressed
         Client *c;
         wl_list_for_each(c, &clients, link)
         {
-		sethidden(c, 1);
+		sethidden(c, c->ishidden ? 0 : 1);
         }
     }
 
